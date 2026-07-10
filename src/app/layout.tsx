@@ -11,7 +11,11 @@ import {
   SignedOut,
   SignedIn,
 } from "@clerk/nextjs";
+import { UnauthenticatedView } from "@/features/auth/components/unauthenticated-view";
+import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+
 import { dark } from "@clerk/themes"; 
+import { Authenticated, Unauthenticated, AuthLoading } from "@/components/convex-auth";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -48,6 +52,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+            <ConvexClientProvider>
           <header>
           <SignedOut>
             <SignInButton></SignInButton>
@@ -59,8 +64,19 @@ export default function RootLayout({
             <UserButton></UserButton>
             </SignedIn>
             </header>
-          
-          {children}
+          <Authenticated>
+{children}
+          </Authenticated>
+          <Unauthenticated>
+            <SignInButton></SignInButton>
+            <SignUpButton>
+              <button className="bg-rose-500 text-white p-2 rounded-2xl">signup</button>
+            </SignUpButton>
+          </Unauthenticated>
+          <AuthLoading  >
+            Auth loading...
+          </AuthLoading>
+          </ConvexClientProvider>   
         </ThemeProvider>
       </body>  
     </html>

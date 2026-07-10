@@ -1,10 +1,4 @@
-import { Button } from "@/components/ui/button";
-
-const x = () => {
-  return (
-    <div>
-      <Button >click me</Button>
-    </div>
-  );
-};
-export default x;
+"use client";
+import { ProjectsView } from "@/features/projects/components/project-view";
+export const Home=()=>(<ProjectsView/>)
+export default Home;
