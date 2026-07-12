@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   ClerkProvider,
   SignInButton,
@@ -52,31 +53,33 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-            <ConvexClientProvider>
-          <header>
-          <SignedOut>
-            <SignInButton></SignInButton>
-            <SignUpButton>
-              <button className="bg-rose-500 text-white p-2 rounded-2xl">signup</button>
-            </SignUpButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton></UserButton>
-            </SignedIn>
-            </header>
-          <Authenticated>
-{children}
-          </Authenticated>
-          <Unauthenticated>
-            <SignInButton></SignInButton>
-            <SignUpButton>
-              <button className="bg-rose-500 text-white p-2 rounded-2xl">signup</button>
-            </SignUpButton>
-          </Unauthenticated>
-          <AuthLoading  >
-            Auth loading...
-          </AuthLoading>
-          </ConvexClientProvider>   
+            <TooltipProvider>
+              <ConvexClientProvider>
+                <header>
+                  <SignedOut>
+                    <SignInButton />
+                    <SignUpButton>
+                      <button className="bg-rose-500 text-white p-2 rounded-2xl">signup</button>
+                    </SignUpButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                </header>
+
+                {children}
+                
+                <Unauthenticated>
+                  <SignInButton />
+                  <SignUpButton>
+                    <button className="bg-rose-500 text-white p-2 rounded-2xl">signup</button>
+                  </SignUpButton>
+                </Unauthenticated>
+                <AuthLoading>
+                  Auth loading...
+                </AuthLoading>
+              </ConvexClientProvider>
+            </TooltipProvider>   
         </ThemeProvider>
       </body>  
     </html>

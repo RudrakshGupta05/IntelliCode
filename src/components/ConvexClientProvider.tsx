@@ -24,9 +24,9 @@ export function ConvexClientProvider({ children }: { children: ReactNode }) {
             <UserButton></UserButton>
           </SignedIn>
         </header>
-        <Authenticated>
+
           {children}
-        </Authenticated>
+      
         <Unauthenticated>
           <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
             <SignInButton></SignInButton>
