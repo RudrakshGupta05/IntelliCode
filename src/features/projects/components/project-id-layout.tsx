@@ -1,7 +1,8 @@
 "use client";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { Navbar } from "./navbar";
-import{Allotment,} from "allotment" 
+import { Allotment } from "allotment"
+import { Authenticated } from "convex/react";
 import "allotment/dist/style.css"
 const MIN_SIDEBAR_WITH = 200;
 const MAX_SIDEBAR_WITH = 800; 
@@ -17,6 +18,7 @@ projectId:Id<"projects">;
     return (
      
        <div className="flex h-screen w-full flex-col ">
+        <Authenticated>
         <Navbar projectId={projectId}/>
         <div className="flex-1 flex overflow-hidden relative">
             <Allotment className="flex-1 "
@@ -32,6 +34,7 @@ projectId:Id<"projects">;
             </Allotment>
 
         </div>
+        </Authenticated>
         </div>
         
      );
