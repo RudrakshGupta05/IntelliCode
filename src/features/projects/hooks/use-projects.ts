@@ -8,8 +8,8 @@ export const useProjects =()=>{
     return useQuery(api.projects.get);
 };
 
-export const useProject=(projectId:Id<"projects">)=>{
-    return useQuery(api.projects.getById,{id:projectId});
+export const useProject=(projectId:Id<"projects"> | undefined)=>{
+    return useQuery(api.projects.getById, projectId ? {id:projectId} : "skip");
 };
 
 export const useProjectsPartial =(limit:number)=>{
@@ -46,7 +46,7 @@ export const useCreateProject = () => {
         }
     });
 };
-export const useRenameProject = (projectId:Id<"projects">) => {
+export const useRenameProject = () => {
     const { userId } = useAuth();
     return useMutation(api.projects.rename).withOptimisticUpdate((localStore, args) => {
         const now = Date.now();
@@ -60,11 +60,11 @@ export const useRenameProject = (projectId:Id<"projects">) => {
 
         // 1. Optimistically update `api.projects.get`
         const existingProjects = localStore.getQuery(api.projects.getById,{
-            id:projectId
+            id:args.id
         });
         if (existingProjects !== undefined && existingProjects !==null) {
             localStore.setQuery(api.projects.getById, {
-                id:projectId
+                id:args.id
             },{
                 ...existingProjects,
                 name:args.name,
@@ -78,7 +78,7 @@ export const useRenameProject = (projectId:Id<"projects">) => {
                 api.projects.get,
                 {},
                 existingProject.map((project) => {
-                    return project._id === projectId
+                    return project._id === args.id
                         ? { ...project, name: args.name, updatedAt: Date.now() }
                         : project;
                 })
