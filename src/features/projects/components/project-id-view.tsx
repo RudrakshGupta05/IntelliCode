@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { FaGithub } from "react-icons/fa";
 import { Allotment } from "allotment";
 import FileExplorer from "./file-explorer";
+import { EditorView } from "@/features/editor/components/editor-view";
 
 const MIN_SIDEBAR_WITH = 200;
 const MAX_SIDEBAR_WITH = 800; 
@@ -52,7 +53,7 @@ activeView === "editor" ? "visible" :
             <FileExplorer projectId={projectId}/>
         </Allotment.Pane>
         <Allotment.Pane minSize={100}>
-            <p>Editor View </p>
+            <EditorView projectId={projectId}/>
         </Allotment.Pane>
       
     </Allotment>

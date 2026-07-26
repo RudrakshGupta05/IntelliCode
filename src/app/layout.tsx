@@ -55,28 +55,18 @@ export default function RootLayout({
         >
             <TooltipProvider>
               <ConvexClientProvider>
-                <header>
-                  <SignedOut>
-                    <SignInButton />
-                    <SignUpButton>
-                      <button className="bg-rose-500 text-white p-2 rounded-2xl">signup</button>
-                    </SignUpButton>
-                  </SignedOut>
-                  <SignedIn>
-                    <UserButton />
-                  </SignedIn>
-                </header>
+                <Authenticated>
+                  {children}
+                </Authenticated>
 
-                {children}
-                
                 <Unauthenticated>
-                  <SignInButton />
-                  <SignUpButton>
-                    <button className="bg-rose-500 text-white p-2 rounded-2xl">signup</button>
-                  </SignUpButton>
+                  <UnauthenticatedView />
                 </Unauthenticated>
+
                 <AuthLoading>
-                  Auth loading...
+                  <div className="flex items-center justify-center min-h-screen">
+                    Auth loading...
+                  </div>
                 </AuthLoading>
               </ConvexClientProvider>
             </TooltipProvider>   
