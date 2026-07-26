@@ -3,8 +3,18 @@ import {Id} from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 import { useAuth } from "@clerk/nextjs";
 
+export const useFile = (fileId: Id<"files"> | null)=>{
+    return useQuery(api.file.getFile,fileId?{id:fileId}:"skip");
+};
+export const useFilePath = (fileId: Id<"files"> | null)=>{
+    return useQuery(api.file.getFilePath,fileId?{id:fileId}:"skip");
+};
+    
 export const useCreateFile = ()=>{
     return useMutation(api.file.createFile);
+};
+export const useUpdateFile = ()=>{
+    return useMutation(api.file.updateFile);
 };
 export const useCreateFolder = ()=>{
     return useMutation(api.file.createFolder);

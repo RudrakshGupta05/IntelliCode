@@ -12,6 +12,7 @@ import { useRenameFile,useDeleteFile } from "../../hooks/use-files";
 import { TreeItemWrapper } from "./tree-item-wrapper"; 
 import { iso } from "zod/v4";
 import { RenameInput } from "./rename-input";
+import { useEditor } from "@/features/editor/hooks/use-editor";
 
 export const Tree=({
 item,level=0,projectId,
@@ -30,11 +31,10 @@ item,level=0,projectId,
     const deleteFile=useDeleteFile();
     const createFolder=useCreateFolder();
     const createFile=useCreateFile();
+    const {openFile,closeTab,activeTabId}=useEditor(projectId);
     const folderContents=useFolderContents({projectId,parentId:item._id,enabled: item.type==="folder" && isOpen});
-    const startCreating =(type: "file" | "folder") => {
-        setIsOpen (true);
-        setCreating(type);
-    };
+
+  
     const handleRename=(newName:string)=>{
         setIsRenaming(false);
         if(newName===item.name){
@@ -55,9 +55,15 @@ item,level=0,projectId,
             createFolder({projectId,parentId:item._id,name});
         } 
     }
+      const startCreating =(type: "file" | "folder") => {
+        setIsOpen (true);
+        setCreating(type);
+    };
+
 
     if(item.type==="file"){
         const fileName=item.name;
+        const isActive=activeTabId===item._id; 
         if(isRenaming){
             return (
                 <RenameInput type="file"
@@ -71,11 +77,11 @@ item,level=0,projectId,
            <TreeItemWrapper 
            item={item}
            level={level}
-           isActive={false}
-           onClick={() => {}}
-           onDoubleClick={() => {}}
+           isActive={isActive}
+           onClick={() => openFile(item._id,{pinned:false})}
+           onDoubleClick={() => openFile(item._id,{pinned:true})}
            onRename={() => setIsRenaming (true) }
-           onDelete={()=>deleteFile({id:item._id})}>
+           onDelete={()=>{closeTab(item._id);deleteFile({id:item._id})}}>
             <FileIcon fileName={fileName} autoAssign className="size-4"/>
             <span className="truncate text-sm">{fileName}</span>
            </TreeItemWrapper>
