@@ -5,7 +5,7 @@ import { FileBreadcrumbs } from "./file-breadcrumbs";
 import Image from "next/image";
 import { useFile, useUpdateFile } from "@/features/projects/hooks/use-files";
 import { CodeEditor } from "./code-editor";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 
 export const EditorView=({projectId}: {projectId: Id<"projects">})=>{
@@ -15,6 +15,14 @@ export const EditorView=({projectId}: {projectId: Id<"projects">})=>{
   const timeoutRef=useRef<NodeJS.Timeout | null>(null);
   const isActiveFileBinary=activeFile&& activeFile.storageId;
   const isActiveFileText=activeFile&& !activeFile.storageId;
+
+  useEffect(()=>{
+    return ()=>{
+        if(timeoutRef.current){
+            clearTimeout(timeoutRef.current);
+        }
+    }
+  },[activeTabId])
 
     return (
         <div className="h-full flex flex-col ">
