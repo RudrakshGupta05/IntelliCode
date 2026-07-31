@@ -7,7 +7,9 @@ const layout = async ({children,params}:{children:React.ReactNode;
 }) => {
     const {projectid}=await params;
   return (
-    <ProjectIdLayout projectId={projectid as Id<"projects">}> {children} </ProjectIdLayout>
+    <ProjectIdLayout projectId={projectid as Id<"projects">}>
+      {children} 
+      </ProjectIdLayout>
     
   ) 
 }

@@ -1,22 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-  SignIn,
-  SignedOut,
-  SignedIn,
-} from "@clerk/nextjs";
-import { UnauthenticatedView } from "@/features/auth/components/unauthenticated-view";
-import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-
-import { dark } from "@clerk/themes"; 
-import { Authenticated, Unauthenticated, AuthLoading } from "@/components/convex-auth";
+import { Providers } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,39 +26,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-     <ClerkProvider appearance={{
-      theme:dark 
-     }} >
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${plexMono.variable} antialiased`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
+     <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${inter.variable} ${plexMono.variable} antialiased`}
         >
-            <TooltipProvider>
-              <ConvexClientProvider>
-                <Authenticated>
-                  {children}
-                </Authenticated>
-
-                <Unauthenticated>
-                  <UnauthenticatedView />
-                </Unauthenticated>
-
-                <AuthLoading>
-                  <div className="flex items-center justify-center min-h-screen">
-                    Auth loading...
-                  </div>
-                </AuthLoading>
-              </ConvexClientProvider>
-            </TooltipProvider>   
-        </ThemeProvider>
-      </body>  
+          <Providers>
+            
+            {children}
+            <Toaster/>
+            </Providers>
+        </body>
     </html>
-    </ClerkProvider>
-  );
+  )
 }
