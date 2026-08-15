@@ -4,5 +4,5 @@ import { helloworld } from "./functions";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [helloworld ],
+  functions: [helloworld],
 });

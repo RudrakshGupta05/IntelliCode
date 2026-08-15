@@ -11,6 +11,8 @@ import {animals,adjectives,colors,uniqueNamesGenerator} from "unique-names-gener
 import { useEffect, useState } from "react";
 import { ProjectsCommandDialog } from "./projects-command-dialog";
 
+import { UserButton } from "@clerk/nextjs";
+
 const font=Poppins({
     subsets:["latin"],
     weight:["400","500","600","700"] 
@@ -39,7 +41,10 @@ export const ProjectsView = () => {
     open={CommandDialogOpen}
     onOpenChange={setCommandDialogOpen}
     />
-    <div className="min-h-screen bg-sidebar flex flex-col items-center justify-center p-6 md:p-16">
+    <div className="min-h-screen bg-sidebar flex flex-col items-center justify-center p-6 md:p-16 relative">
+      <div className="absolute top-4 right-4">
+        <UserButton />
+      </div>
       <div className="w-full max-w-sm mx-auto flex flex-col gap-4 items-center">
         <div className="flex justify-between gap-4 w-full items-center">
           <div className="flex items-center gap-2 w-full group/logo">
