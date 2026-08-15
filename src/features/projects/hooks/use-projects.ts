@@ -5,7 +5,8 @@ import {Id,Doc} from "../../../../convex/_generated/dataModel";
 import { useAuth } from "@clerk/nextjs";
 
 export const useProjects =()=>{
-    return useQuery(api.projects.get);
+    const { isSignedIn } = useAuth();
+    return useQuery(api.projects.get, isSignedIn ? {} : "skip");
 };
 
 export const useProject=(projectId:Id<"projects"> | undefined)=>{
@@ -13,7 +14,8 @@ export const useProject=(projectId:Id<"projects"> | undefined)=>{
 };
 
 export const useProjectsPartial =(limit:number)=>{
-    return useQuery(api.projects.getPartial,{limit,});
+    const { isSignedIn } = useAuth();
+    return useQuery(api.projects.getPartial, isSignedIn ? {limit} : "skip");
 };
 export const useCreateProject = () => {
     const { userId } = useAuth();

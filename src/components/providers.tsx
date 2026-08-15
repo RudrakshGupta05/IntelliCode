@@ -1,7 +1,7 @@
 "use client";
 import { ClerkProvider, useAuth } from "@clerk/nextjs";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { ConvexReactClient } from "convex/react";
+import { ConvexReactClient, Authenticated, Unauthenticated } from "convex/react";
 import { UnauthenticatedView } from "@/features/auth/components/unauthenticated-view";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,7 +20,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
           disableTransitionOnChange
         >
           <TooltipProvider>
-            {children}
+            <Authenticated>
+              {children}
+            </Authenticated>
+            <Unauthenticated>
+              <UnauthenticatedView />
+            </Unauthenticated>
           </TooltipProvider>
         </ThemeProvider>
       </ConvexProviderWithClerk>
