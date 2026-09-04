@@ -58,18 +58,13 @@ export async function POST(request:Request){
             const scrapedResults=await Promise.all(
                 urls.map(async(url)=>{
                     try{
-                        const result=await firecrawl.scrape(url,{
+                        const result = await firecrawl.scrapeUrl(url,{
                             formats:["markdown"],
-
-                        });
-                        if(result.data?.markdown){
-                            return `<doc url="${url}">
-                            \n ${result.data.markdown} \n
-                            </doc>`;
+                        }) as any;
+                        if (result.success && result.markdown) {
+                            return `\n\n--- Content from ${url} ---\n\n${result.markdown}`;
                         }
-                          return null; 
                     }
-                  
                     catch{return null;}
                 })
             );

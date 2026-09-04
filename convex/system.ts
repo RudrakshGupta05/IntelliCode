@@ -68,4 +68,313 @@ conversationId:v.id("conversations"),
             status:"completed" as const ,
         })
     }
+ });
+
+ export const getProcessingMessages=query({
+    args:{
+        internalKey:v.string(),
+        projectId:v.id("projects"),  
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);   
+        return await ctx.db.query("messages").withIndex("by_project_status",
+            (q)=>q
+            .eq("projectId",args.projectId)
+            .eq("status","processing")
+    ).collect();
+    } 
+ }) 
+  export const updateMessageStatus = mutation({
+    args:{
+        internalKey:v.string(),
+        messageId:v.id("messages"),
+         status:v.union(
+                v.literal("processing"),
+                v.literal("completed"),
+                v.literal("cancelled"),
+                        
+            )
+        
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);
+        await ctx.db.patch(args.messageId,{
+           
+            status:args.status,
+        })
+    }
+ });
+
+ export const getRecentMessages=query({
+    args:{
+        internalKey:v.string(),
+       limit:v.optional(v.number()),
+        conversationId:v.id("conversations"),
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);
+        const messages=await ctx.db
+        .query("messages")
+        .withIndex("by_conversation",(q)=>
+        q.eq("conversationId",args.conversationId))
+        .order("asc")
+        .collect();
+        const  limit=args.limit??10;
+        return messages.slice(-limit);
+        
+    },
+ });
+
+ export const updateConversationTitle=mutation({
+    args:{
+        internalKey:v.string(),
+        conversationId:v.id("conversations"),
+        title:v.string(),
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);
+        await ctx.db.patch(args.conversationId,{
+            title:args.title,
+            updatedAt:Date.now(),
+        })
+    }
  })
+
+
+ export const getProjectFiles=query({
+    args:{
+        internalKey:v.string(),
+        projectId:v.id("projects"),
+        
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);
+        return await ctx.db
+        .query("files")
+        .withIndex("by_project",(q)=>q.eq("projectId",args.projectId))
+        .collect();
+    }
+ });
+ 
+export const getFileById = query({
+args: {
+internalKey:v.string(), 
+fileId: v.id("files"),
+},
+handler: async (ctx, args) => {
+validateInternalKey (args. internalKey) ;
+return await ctx.db.get(args.fileId) ;}});
+
+export const updateFile=mutation({
+    args:{
+        internalKey:v.string(),
+        fileId:v.id("files"),
+        content:v.string()
+    },
+    handler:async (ctx,args)=>{
+         validateInternalKey(args.internalKey);
+
+       const file=await ctx.db.get(args.fileId);
+       if(!file){
+        throw new Error("file not found");
+       }
+       await ctx.db.patch(args.fileId,{
+           content:args.content,
+           updateAt:Date.now(),
+           
+       });
+       return args.fileId;
+    }
+});
+
+export const createFile=mutation({
+    args:{
+        internalKey:v.string(),
+        projectId:v.id("projects"),
+        parentId:v.optional(v.id("files")),
+        name:v.string(),
+     
+        content:v.string(),
+    },
+    handler:async (ctx,args)=>{
+         validateInternalKey(args.internalKey);
+
+         const files=await ctx.db
+         .query("files")
+         .withIndex("by_project_parent",(q)=>q.eq("projectId",args.projectId)
+            .eq("parentId",args.parentId)
+        )
+        .collect();
+
+        const existing=files.find(
+            (file)=>file.name===args.name && file.type==="file"
+        );
+        if(existing){
+            throw new Error("file with this name already exists")
+        }
+        const fileId=await ctx.db.insert("files",{
+            projectId:args.projectId,
+            parentId:args.parentId,
+            name:args.name,
+            type:"file",
+            content:args.content,
+            updateAt:Date.now(),
+        });
+        return fileId;
+    }
+});
+export const createFiles=mutation({
+    args:{
+        internalKey:v.string(),
+        projectId:v.id("projects"),
+        parentId:v.optional(v.id("files")),
+        files:v.array(
+            v.object({
+                name:v.string(),
+                content:v.string(),
+            })
+        )
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);
+
+         const existingFiles=await ctx.db.query("files")
+         .withIndex("by_project_parent",(q)=>q.eq("projectId",args.projectId)
+            .eq("parentId",args.parentId)
+        )
+        .collect();
+
+        const results:{name:string;fileId:string;error?:string}[]=[];
+
+        for(const file of args.files){
+            const existing=existingFiles.find(
+                (f)=>f.name===file.name && f.type==="file"
+            );
+            if(existing){
+                results.push({
+                    name:file.name,
+                    error:"file already exists",
+                    fileId:existing._id,
+                });
+                continue;
+            }
+            const fileId=await ctx.db.insert("files",{
+                projectId:args.projectId,
+                parentId:args.parentId,
+                name:file.name,
+                type:"file",
+                content:file.content,
+                updateAt:Date.now(),
+            });
+            results.push({name:file.name,fileId:fileId});
+        }
+        return results;
+    }});
+    export const createFolder =mutation({
+    args:{
+        internalKey:v.string(),
+        projectId:v.id("projects"),
+        parentId:v.optional(v.id("files")),
+        name:v.string(),
+     
+      
+    },
+    handler:async (ctx,args)=>{
+         validateInternalKey(args.internalKey);
+
+         const files=await ctx.db
+         .query("files")
+         .withIndex("by_project_parent",(q)=>q.eq("projectId",args.projectId)
+            .eq("parentId",args.parentId)
+        )
+        .collect();
+
+        const existing=files.find(
+            (file)=>file.name===args.name && file.type==="folder"
+        );
+        if(existing){
+            throw new Error("folder with this name already exists")
+        }
+        const fileId=await ctx.db.insert("files",{
+            projectId:args.projectId,
+            parentId:args.parentId,
+            name:args.name,
+            type:"folder",
+    
+            updateAt:Date.now(),
+        });
+        return fileId;
+    }
+});
+
+export const renameFile=mutation({
+    args:{
+       internalKey:v.string(),
+       fileId:v.id("files"),
+       newName:v.string(),
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);
+        const file=await ctx.db.get(args.fileId);
+        if(!file){
+            throw new Error("file not found");
+        }
+        const siblings=await ctx.db
+        .query("files")
+        .withIndex("by_project_parent",(q)=>q.eq("projectId",file.projectId)
+           .eq("parentId",file.parentId)
+       )
+       .collect();
+
+       const existing=siblings.find(
+           (sibling)=>sibling.name===args.newName && sibling._id!==args.fileId && sibling.type ===file.type
+       );
+       if(existing){
+           throw new Error(`A ${file.type} with name ${args.newName} already exists `)
+       }
+        await ctx.db.patch(args.fileId,{
+            name:args.newName,
+            updateAt:Date.now(), 
+        });
+        return args.fileId;
+    }
+})
+
+export const deleteFile=mutation({
+    args:{
+        internalKey:v.string(),
+        fileId:v.id("files"),
+    },
+    handler:async(ctx,args)=>{
+        validateInternalKey(args.internalKey);
+
+        const file=await ctx.db.get(args.fileId);
+        if(!file){
+            throw new Error("file not found")
+        }
+        const deleteRecursive=async (fileId:typeof args.fileId)=>{
+           const item=await ctx.db.get(fileId);
+           if(!item){
+               return;
+           }
+           if(item.type==="folder"){
+           const children=await ctx.db
+           .query("files")
+           .withIndex("by_project_parent",(q)=>q.eq("projectId",item.projectId)
+              .eq("parentId",fileId)
+          )
+          .collect();
+          for(const child of children){
+              await deleteRecursive(child._id);
+          }
+        }
+        if(item.storageId){
+            await ctx.storage.delete(item.storageId);
+        }
+        await ctx.db.delete(fileId);
+    };
+
+        await deleteRecursive(args.fileId);
+        return args.fileId;
+    }
+})  

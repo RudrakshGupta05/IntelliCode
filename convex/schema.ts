@@ -60,7 +60,7 @@ conversations:defineTable({
     
  })
     .index("by_conversation",["conversationId"])
-    .index("by_project",["projectId","status"]),  
+    .index("by_project_status",["projectId","status"]),  
 
 
 }); 

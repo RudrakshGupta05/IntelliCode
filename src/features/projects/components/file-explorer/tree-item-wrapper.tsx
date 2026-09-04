@@ -17,13 +17,13 @@ export const TreeItemWrapper=({item,children,level,isActive,onClick,onDoubleClic
     item: Doc<"files">;
     children: React.ReactNode;
     level: number;
-    isActive: boolean;
+    isActive?: boolean;
     onClick?: () => void;
     onDoubleClick?: () => void;
     onRename: (id: Id<"files">) => void;
     onDelete: (id: Id<"files">) => void;
-    onCreateFile: (id: Id<"files">) => void;
-    onCreateFolder: (id: Id<"files">) => void;
+    onCreateFile?: (id: Id<"files">) => void;
+    onCreateFolder?: (id: Id<"files">) => void;
     }) => {
         return (
             <ContextMenu>
@@ -44,12 +44,12 @@ export const TreeItemWrapper=({item,children,level,isActive,onClick,onDoubleClic
                 <ContextMenuContent onCloseAutoFocus={(e)=>e.preventDefault()} className="w-64">
                    {item.type==="folder" && (
                     <>
-                    <ContextMenuItem onClick={()=>onCreateFile(item._id)}
+                    <ContextMenuItem onClick={()=>onCreateFile?.(item._id)}
                     className="text-sm">
                     New File...
                     </ContextMenuItem>
 
-                    <ContextMenuItem onClick={()=>onCreateFolder(item._id)}
+                    <ContextMenuItem onClick={()=>onCreateFolder?.(item._id)}
                     className="text-sm">
                     New Folder...
                     </ContextMenuItem>
