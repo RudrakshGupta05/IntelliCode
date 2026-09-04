@@ -256,7 +256,7 @@ export const deleteFile=mutation({
         }
         await ctx.db.delete("files",fileId);
     }
-    deleteRecursive(args.id);
+    await deleteRecursive(args.id);
        await ctx.db.patch("projects",file.projectId,{
             updatedAt:Date.now(),})
        
