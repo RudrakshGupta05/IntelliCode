@@ -5,10 +5,11 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
+  enabled: process.env.NODE_ENV === "production",
   dsn: "https://1ded7fa6dd30242e5f0ff25c82eb83c8@o4511687549976576.ingest.us.sentry.io/4511687562493952",
 
-  // Add optional integrations for additional features
-  integrations: [Sentry.replayIntegration()],
+  // Disable Replay in development to prevent WebContainer iframe cross-origin and DataCloneError crashes
+  integrations: process.env.NODE_ENV === "development" ? [] : [Sentry.replayIntegration()],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
@@ -16,12 +17,10 @@ Sentry.init({
   enableLogs: true,
 
   // Define how likely Replay events are sampled.
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
+  replaysSessionSampleRate: process.env.NODE_ENV === "development" ? 0 : 0.1,
 
   // Define how likely Replay events are sampled when an error occurs.
-  replaysOnErrorSampleRate: 1.0,
+  replaysOnErrorSampleRate: process.env.NODE_ENV === "development" ? 0 : 1.0,
 
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:

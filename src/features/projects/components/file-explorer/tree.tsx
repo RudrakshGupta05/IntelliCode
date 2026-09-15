@@ -1,18 +1,18 @@
-import { ChevronRightIcon, FileVideo } from "lucide-react";
-import {FileIcon,FolderIcon } from "@react-symbols/icons/utils";
-import { cn , } from "@/lib/utils";
-import { useCreateFolder,useCreateFile,useFolderContents } from "../../hooks/use-files";
+import { ChevronRightIcon, FilePlusCornerIcon, FolderPlusIcon } from "lucide-react";
+import { FileIcon, FolderIcon } from "@react-symbols/icons/utils";
+import { cn } from "@/lib/utils";
+import { useCreateFolder, useCreateFile, useFolderContents } from "../../hooks/use-files";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { Doc } from "../../../../../convex/_generated/dataModel";
 import { getItemPadding } from "./constants";
 import { LoadingRow } from "./loading-row";
 import { CreateInput } from "./create-input";
 import { useState } from "react";
-import { useRenameFile,useDeleteFile } from "../../hooks/use-files";
+import { useRenameFile, useDeleteFile } from "../../hooks/use-files";
 import { TreeItemWrapper } from "./tree-item-wrapper"; 
-import { iso } from "zod/v4";
 import { RenameInput } from "./rename-input";
 import { useEditor } from "@/features/editor/hooks/use-editor";
+import { Button } from "@/components/ui/button";
 
 export const Tree=({
 item,level=0,projectId,
@@ -25,7 +25,7 @@ item,level=0,projectId,
 })=>{
     const [isOpen,setIsOpen] = useState(false);
     const [isRenaming, setIsRenaming] = useState(false);
-    const [creating, setCreating] = useState<"files" | "folder" |null>(null);
+    const [creating, setCreating] = useState<"file" | "folder" |null>(null);
 
     const rename=useRenameFile();
     const deleteFile=useDeleteFile();
@@ -149,11 +149,27 @@ item,level=0,projectId,
        level={level}
        onClick={()=>setIsOpen((value)=>!value)}
        onDoubleClick={()=>{}}
-       onRename={()=>{}}
+       onRename={()=>setIsRenaming(true)}
        onDelete={()=>deleteFile({id:item._id})}
        onCreateFile={()=>startCreating("file")}
        onCreateFolder={()=>startCreating("folder")}>
-            {folderRender }
+            {folderRender}
+            <div className="opacity-0 group-hover:opacity-100 transition-none duration-0 flex items-center gap-0.5 ml-auto mr-1">
+                <Button onClick={(e)=>{
+                    e.stopPropagation();
+                    e.preventDefault();
+                    startCreating("file");
+                }} variant="highlight" size="icon-xs" title="New File">
+                    <FilePlusCornerIcon className="size-3.5"/>
+                </Button>
+                <Button onClick={(e)=>{
+                    e.stopPropagation();
+                    e.preventDefault();
+                    startCreating("folder");
+                }} variant="highlight" size="icon-xs" title="New Folder">
+                    <FolderPlusIcon className="size-3.5"/>
+                </Button>
+            </div>
         </TreeItemWrapper>
         {isOpen && (
             <>
