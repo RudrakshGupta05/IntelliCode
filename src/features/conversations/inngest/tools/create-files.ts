@@ -29,6 +29,7 @@ export const createCreateFileTool=({
     return createTool({
         name:"createFiles",
         description:"Create multiple files at once in the same folder. Use this to batch create files that share the same parent folder. More efficient than creating files one by one",
+
         parameters: z.object({
             parentId: z.string().describe("The parent folder ID to create files in, or empty string for root level"),
             files: z.array(
@@ -37,6 +38,17 @@ export const createCreateFileTool=({
                     content: z.string().describe("File content")
                 })
             ).describe("Array of files to create")
+=======
+        parameters:z.object({
+            parentId:z.string().optional().describe("The parent folder ID to create files in"),
+            files:z.array(
+                z.object({
+                    name:z.string().describe("File name including extensions"),
+                    content:z.string().describe("File content")
+                })
+            ).describe("arrays of files to create")
+            
+
         }),
         handler: async(params,{step:toolStep})=>{
             const parsed=paramSchema.safeParse(params);
@@ -47,6 +59,7 @@ export const createCreateFileTool=({
             const {parentId,files}=parsed.data;
             
             
+
             try {
                 const execute = async () => {
                     let resolvedParentId: Id<"files"> | undefined;
@@ -179,6 +192,51 @@ export const createCreateFileTool=({
 
                 return toolStep ? await toolStep.run("create-files", execute) : await execute();
             }
+
+            try{
+               return await toolStep?.run("create-files",async()=>{
+                let resolvedParentId :Id<"files"> | undefined;
+                if(parentId && parentId !==""){
+                  try{
+                    resolvedParentId = parentId as Id<"files">;
+                    const parentFolder=await convex.query(api.system.getFileById,{
+                        internalKey,
+                        fileId:resolvedParentId,
+                    });
+                    if(!parentFolder ||parentFolder.type==="file"){
+                        return `Error: Parent folder with ID "${parentId}" not found. Use listFiles to get valid folder IDs.`
+                    }
+                    if(parentFolder.type !=="folder"){
+                        return `Error: The ID "${parentId}" is a file, not a folder. Use a folder ID as parentId.`;
+                    }
+
+                  }
+                  catch{
+                    return `Error:Invalid parentId "${parentId}". Use listFiles to get valid folder IDs, or use empty string for root files `
+
+                  }
+                }
+                const results=await convex.mutation(api.system.createFiles,{
+                    internalKey,
+                    projectId,
+                    parentId:resolvedParentId,
+                    files
+                    
+                })
+                const created=results.filter((r)=>!r.error);
+                const failed=results.filter((r)=>r.error);
+                let response=`Created ${created.length} file(s) successfully.`;
+                if(created.length > 0){
+                    response +=`:${created.map((r)=>r.name).join(",")}`;
+                }
+                if(failed.length >0 ){
+                   response += `.Failed: ${failed.map((r) => `${r.name}(${r.error})`).join(", ")}`;
+                  
+                }
+                return response;
+               })
+                        }
+
                         
             catch(error){
                 return  `   Error creating files: ${error instanceof Error?error.message:"Unknown error occurred"} `
