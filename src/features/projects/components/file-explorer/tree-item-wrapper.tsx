@@ -28,18 +28,20 @@ export const TreeItemWrapper=({item,children,level,isActive,onClick,onDoubleClic
         return (
             <ContextMenu>
                 <ContextMenuTrigger asChild>
-                <button onClick={onClick}
+                <div role="button"
+                tabIndex={0}
+                onClick={onClick}
                 onDoubleClick={onDoubleClick}
                 onKeyDown={(e)=>{
                     if(e.key==="Enter"){
                         e.preventDefault();
                         onRename?.(item._id);
                     }}}
-                className={cn("group flex items-center gap-1 w-full h-5.5 hover: bg-accent/30 outline-none focus:ring-1 focus:ring-inset focus:ring-ring",isActive && "bg-accent/30")}
+                className={cn("group flex items-center gap-1 w-full h-5.5 hover: bg-accent/30 outline-none focus:ring-1 focus:ring-inset focus:ring-ring cursor-pointer select-none",isActive && "bg-accent/30")}
                 style={{paddingLeft:getItemPadding(level,item.type==="file")}}    
                 >
                     {children}
-                </button>
+                </div>
                 </ContextMenuTrigger>
                 <ContextMenuContent onCloseAutoFocus={(e)=>e.preventDefault()} className="w-64">
                    {item.type==="folder" && (

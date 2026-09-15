@@ -3,6 +3,10 @@ import {Id} from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 import { useAuth } from "@clerk/nextjs";
 
+
+export const useFiles = (projectId: Id<"projects">)=>{
+    return useQuery(api.file.getFiles,projectId?{projectId}:"skip");
+};
 export const useFile = (fileId: Id<"files"> | null)=>{
     return useQuery(api.file.getFile,fileId?{id:fileId}:"skip");
 };
