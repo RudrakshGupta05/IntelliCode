@@ -18,34 +18,21 @@ interface ConversationSidebarProps{
 export const ConversationSidebar=({projectId}:ConversationSidebarProps)=>{
     const [selectedConversationId,setSelectedConversationId]=useState<Id<"conversations">|null>(null);
 
-
     const [pastConversationsOpen, setPastConversationsOpen] = useState(false);
     const createConversation=useCreateConversation();
     const conversations=useConversations(projectId);
     const [input,setInput]=useState("");
     const activeConversationId=selectedConversationId??conversations?.[0]?._id??null;
-
-    const [pastConversationsOpen, setPastConversationsOpen] = useState(false)
-     const createConversation=useCreateConversation();
-     const conversations=useConversations(projectId);
-     const [input,setInput]=useState("");
-     const activeConversationId=selectedConversationId??conversations?.[0]?._id??null;
-
     const activeConversation=useConversation(activeConversationId);
     const conversationMessages=useMessages(activeConversationId);
     const isProcessing=conversationMessages?.some(
         (msg)=>msg.status==="processing"
-
     );
-
-    )
-
     
     const handleCancel=async()=>{
         try{
             await ky.post("/api/messages/cancel",{
                 json:{
-
                     projectId,
                 }
             });
@@ -56,16 +43,6 @@ export const ConversationSidebar=({projectId}:ConversationSidebarProps)=>{
     };
 
     const handleCreateConversation=async()=>{
-
-                    projectId,                }
-            })
-        }
-        catch{
-            toast.error("Failed to cancel messages")
-        }
-    }
-     const handleCreateConversation=async()=>{
-
         try{
             const newConversationId=await createConversation({
                 projectId,
@@ -78,7 +55,6 @@ export const ConversationSidebar=({projectId}:ConversationSidebarProps)=>{
             toast.error("Failed to create conversation");
             return null;
         }
-
     };
 
     const handleSubmit=async (message:PromptInputMessage)=>{
@@ -96,20 +72,6 @@ export const ConversationSidebar=({projectId}:ConversationSidebarProps)=>{
         setInput("");
 
         let conversationId=activeConversationId;
-
-     }
-const handleSubmit=async (message:PromptInputMessage)=>{
-
-
-    if(isProcessing && !message.text){
-        await handleCancel();
-        setInput("")
-        return;
-    }
-    let conversationId=activeConversationId;
-     if(!conversationId){
-        conversationId=await handleCreateConversation()
-
         if(!conversationId){
             conversationId=await handleCreateConversation();
             if(!conversationId){
@@ -140,32 +102,13 @@ const handleSubmit=async (message:PromptInputMessage)=>{
     <>
     <PastConversationsDialog projectId={projectId} open={pastConversationsOpen} onOpenChange={setPastConversationsOpen} onSelect={setSelectedConversationId} />
     
-
     <div className="flex flex-col h-full bg-sidebar ">
         <div className="h-[35px] flex items-center justify-between border-b">
-
-}
-    catch{
-        toast.error("Message failed to send")
-    }
-    setInput(""); 
-}
-    return (
-    <>
-    <PastConversationsDialog projectId={projectId} open={pastConversationsOpen} onOpenChange={setPastConversationsOpen} onSelect={setSelectedConversationId} />
-    
-    <div className="flex flex-col h-full bg-sidebar ">
-        <div className="h-8.75 flex items-center justify-between border-b">
-
             <div className="text-sm truncate pl-3">
                 {activeConversation?.title??DEFAULT_CONVERSATION_TITLE}
             </div>
             <div className="flex items-center px-1 gap-1">
-
                 <Button size="icon-xs" variant="highlight" onClick={()=>setPastConversationsOpen(true)} title="Past Conversations">
-
-                <Button size="icon-xs" variant="highlight" onClick={()=>setPastConversationsOpen(true)}>
-
                     <HistoryIcon className="size-3.5"/> 
                 </Button>
                 <Button size="icon-xs" variant="highlight" onClick={handleCreateConversation} title="New Conversation">

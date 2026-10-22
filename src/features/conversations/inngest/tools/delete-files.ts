@@ -4,7 +4,6 @@ import { convex } from "@/lib/convex-client";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 
-
 interface DeleteFilesToolOptions {
     internalKey: string;
     projectId?: Id<"projects">;
@@ -108,84 +107,3 @@ export const createDeleteFilesTool = ({
         },
     });
 };
-
-import { foldAll } from "@codemirror/language";
-
-interface DeleteFilesToolOptions{
-   
-    internalKey:string;
-};
-
-const paramSchema=z.object({ 
-    fileIds:z.array(z.string()).min(1,"File Id cannot be empty")
-    .min(1,"Provide at least one file ID to delete")
-    
-   
-    
-    
-});
-
-export const createDeleteFilesTool=({
-   
-    internalKey
-}:DeleteFilesToolOptions)=>{
-    return createTool({
-        name:"deleteFiles",
-        description:"Delete multiple files from the project. Use this to batch delete files that are in the same folder. More efficient than deleting files one by one",
-        parameters:z.object({
-          fileId:z.array(z.string()).describe("Array of file IDs to delete")
-        }),
-        handler: async(params,{step:toolStep})=>{
-            const parsed=paramSchema.safeParse(params);
-            if(!parsed.success){
-                return `Error: ${parsed.error.issues[0].message} `;
-            };
-
-            const {fileIds}=parsed.data;
-            const filesToDelete:{
-                id:string;
-                name:string;
-                type:string
-
-            }[]=[];
-            for(const fileId of fileIds){
-                const file=await convex.query(api.system.getFileById, {
-                    internalKey,
-                    fileId:fileId as Id<"files">
-                });
-                if(!file){
-                    return `Error: File ${fileId} not found`
-                }
-                filesToDelete.push({
-                    id:file._id,
-                    name:file.name,
-                    type:file.type
-                })
-            }
-            
-            
-            try{
-               return await toolStep?.run("delete-files",async()=>{
-                let resolvedParentId :Id<"files"> | undefined;
-                const results:string[]=[];
-                for(const file of filesToDelete){
-                    await convex.mutation(api.system.deleteFile,{
-                        internalKey,
-                        fileId:file.id as Id<"files">
-                    })
-                    results.push(`Deleted ${file.type} "${file.name}" successfully`)
-                }
-return results.join("\n ")
-
-               })
-                        }
-                        
-            catch(error){
-                return  `   Error deleting files: ${error instanceof Error?error.message:"Unknown error occurred"} `
-
-            }
-            
-        
-    }})
-}
-
