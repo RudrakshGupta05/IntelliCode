@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertCircleIcon, GlobeIcon, Loader2Icon } from "lucide-react"
+import { AlertCircleIcon, GlobeIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { FaGithub } from "react-icons/fa"
 
@@ -31,7 +31,7 @@ const getProjectIcon = (project: Doc<"projects">) => {
 
   if (project.importStatus === "importing") {
     return (
-      <Loader2Icon className="size-4 text-muted-foreground animate-spin" />
+      <FaGithub className="size-4 text-muted-foreground animate-pulse" />
     );
   }
 

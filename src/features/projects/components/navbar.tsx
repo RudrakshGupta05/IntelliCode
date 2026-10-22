@@ -10,7 +10,8 @@ import { UserButton } from "@clerk/nextjs";
 import { useProject, useRenameProject } from "../hooks/use-projects";
 import { useState } from "react";
 import { Tooltip ,TooltipContent,TooltipTrigger} from "@/components/ui/tooltip";
-import { LoaderIcon,CloudCheckIcon } from "lucide-react";
+import { CloudCheckIcon } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 
 
@@ -87,7 +88,7 @@ export const Navbar=({projectId}:{projectId:Id<"projects">})=>{
                 {project?.importStatus==="importing"?(
                     <Tooltip>
                         <TooltipTrigger asChild >
-                            <LoaderIcon className="size-4 animate-spin text-muted-foreground"></LoaderIcon>
+                            <FaGithub className="size-4 animate-pulse text-muted-foreground"/>
                         </TooltipTrigger>
                         <TooltipContent>Project is importing</TooltipContent>
                     </Tooltip> 

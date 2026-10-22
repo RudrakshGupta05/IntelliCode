@@ -7,6 +7,7 @@ import { Allotment } from "allotment";
 import FileExplorer from "./file-explorer";
 import { EditorView } from "@/features/editor/components/editor-view";
 import { PreviewView } from "./preview-view";
+import { ExportPopover } from "./export-popover";
 
 const MIN_SIDEBAR_WITH = 200;
 const MAX_SIDEBAR_WITH = 800; 
@@ -34,10 +35,9 @@ return (
             <Tab label="Preview"
             isActive={activeView==="preview"}
             onClick={()=>setActiveView("preview")}/>
-            <div className="ml-auto flex items-center gap-1.5 h-full px-3 cursor-pointer text-muted-foreground border-l hover:bg-accent/30">
-                <FaGithub className="size-3.5 text-muted-foreground"/>
-                <span className="text-sm">Export</span>
-            </div>
+
+            <div className="flex-1"/>
+            <ExportPopover projectId={projectId}/>
         </nav> 
 
         <div className="flex-1 relative">
