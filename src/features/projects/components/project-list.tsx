@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import { Spinner } from "@/components/ui/spinner";
-import { AlertCircleIcon, ArrowRightIcon, GlobeIcon, Loader2Icon, SparkleIcon } from "lucide-react";
+import { AlertCircleIcon, ArrowRightIcon, GlobeIcon, SparkleIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 import { useProjectsPartial } from "../hooks/use-projects";
@@ -25,7 +25,7 @@ const getProjectIcon = (project: Doc<"projects">) => {
 
   if (project.importStatus === "importing") {
     return (
-      <Loader2Icon className="size-3.5 text-muted-foreground animate-spin" />
+      <FaGithub className="size-3.5 text-muted-foreground animate-pulse" />
     );
   }
 

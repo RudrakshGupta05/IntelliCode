@@ -10,6 +10,7 @@ import { useCreateProject } from "../hooks/use-projects";
 import {animals,adjectives,colors,uniqueNamesGenerator} from "unique-names-generator";
 import { useEffect, useState } from "react";
 import { ProjectsCommandDialog } from "./projects-command-dialog";
+import { ImportGithubDialog } from "./import-github-dialog";
 
 import { UserButton } from "@clerk/nextjs";
 
@@ -20,13 +21,19 @@ const font=Poppins({
 export const ProjectsView = () => {
   const createProject=useCreateProject();
   const[CommandDialogOpen,setCommandDialogOpen]=useState(false)
+  const [importDialogOpen,setImportDialogOpen]=useState(false);
   useEffect(() => {
     const handlekeyDown=(e:KeyboardEvent)=>{
      if (e.metaKey ||e.ctrlKey){
       if(e.key=="k"){
         e.preventDefault();
         setCommandDialogOpen((prev)=>!prev);
-      }}
+      }
+      if(e.key=="i"){
+        e.preventDefault();
+        setImportDialogOpen(true);
+      }
+    }
     }
     document.addEventListener("keydown",handlekeyDown);
     return ()=>{
@@ -41,6 +48,7 @@ export const ProjectsView = () => {
     open={CommandDialogOpen}
     onOpenChange={setCommandDialogOpen}
     />
+    <ImportGithubDialog open={importDialogOpen} onOpenChange={setImportDialogOpen}/>
     <div className="min-h-screen bg-sidebar flex flex-col items-center justify-center p-6 md:p-16 relative">
       <div className="absolute top-4 right-4">
         <UserButton />
@@ -81,7 +89,7 @@ export const ProjectsView = () => {
             </div> 
                 </Button>
                  <Button variant="outline"
-                onClick={()=>{}}
+                onClick={()=>setImportDialogOpen(true)}
                 className="h-full items-start justify-start p-4 bg-background border flex flex-col gap-6 rounded-none">
                     <div className="flex items-center justify-between w-full"><FaGithub className="size-4"/>
                  <Kbd className="bg-accent"> ⌘i</Kbd>

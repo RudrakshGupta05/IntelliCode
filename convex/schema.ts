@@ -12,7 +12,6 @@ export default defineSchema({
                 v.literal("completed"),
                 v.literal("importing"),
                 v.literal("failed"),
-                v.literal("none")
             )
         ),
         exportStatus:v.optional(
@@ -21,6 +20,7 @@ export default defineSchema({
                 v.literal("cancelled"),
                 v.literal("exporting"),
                 v.literal("failed"),
+         
                 
             )
         ),
