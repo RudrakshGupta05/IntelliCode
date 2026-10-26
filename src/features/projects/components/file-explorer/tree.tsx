@@ -27,8 +27,8 @@ item,level=0,projectId,
     const [isRenaming, setIsRenaming] = useState(false);
     const [creating, setCreating] = useState<"file" | "folder" |null>(null);
 
-    const rename=useRenameFile();
-    const deleteFile=useDeleteFile();
+    const rename=useRenameFile({projectId,parentId:item.parentId});
+    const deleteFile=useDeleteFile({projectId,parentId:item.parentId});
     const createFolder=useCreateFolder();
     const createFile=useCreateFile();
     const {openFile,closeTab,activeTabId}=useEditor(projectId);
