@@ -6,11 +6,10 @@ import { SparkleIcon } from "lucide-react";
 import { Kbd } from "@/components/ui/kbd";
 import {FaGithub} from "react-icons/fa";
 import ProjectsList from "./project-list";
-import { useCreateProject } from "../hooks/use-projects";
-import {animals,adjectives,colors,uniqueNamesGenerator} from "unique-names-generator";
 import { useEffect, useState } from "react";
 import { ProjectsCommandDialog } from "./projects-command-dialog";
 import { ImportGithubDialog } from "./import-github-dialog";
+import { NewProjectDialog } from "./new-project-dialog";
 
 import { UserButton } from "@clerk/nextjs";
 
@@ -19,9 +18,11 @@ const font=Poppins({
     weight:["400","500","600","700"] 
 })
 export const ProjectsView = () => {
-  const createProject=useCreateProject();
+
   const[CommandDialogOpen,setCommandDialogOpen]=useState(false)
   const [importDialogOpen,setImportDialogOpen]=useState(false);
+  const [newProjectDialogOpen,setNewProjectDialogOpen]=useState(false);
+   
   useEffect(() => {
     const handlekeyDown=(e:KeyboardEvent)=>{
      if (e.metaKey ||e.ctrlKey){
@@ -33,6 +34,10 @@ export const ProjectsView = () => {
         e.preventDefault();
         setImportDialogOpen(true);
       }
+      if(e.key=="j"){
+        e.preventDefault();
+        setNewProjectDialogOpen(true);
+      }
     }
     }
     document.addEventListener("keydown",handlekeyDown);
@@ -40,6 +45,7 @@ export const ProjectsView = () => {
       document.removeEventListener("keydown",handlekeyDown);
     }
   },[] );
+ 
     
   
   return (
@@ -49,6 +55,7 @@ export const ProjectsView = () => {
     onOpenChange={setCommandDialogOpen}
     />
     <ImportGithubDialog open={importDialogOpen} onOpenChange={setImportDialogOpen}/>
+    <NewProjectDialog open={newProjectDialogOpen} onOpenChange={setNewProjectDialogOpen}/>
     <div className="min-h-screen bg-sidebar flex flex-col items-center justify-center p-6 md:p-16 relative">
       <div className="absolute top-4 right-4">
         <UserButton />
@@ -65,19 +72,7 @@ export const ProjectsView = () => {
         <div className="flex flex-col gap-4 w-full">
             <div className="grid grid-cols-2 gap-2">
                 <Button variant="outline"
-                onClick={()=>{
-                  const projectName=uniqueNamesGenerator(
-                    {
-                      dictionaries: [adjectives,animals,colors],
-                      separator:" ",
-                      style:"lowerCase",
-                      length:3
-                    }
-                  )
-                  createProject({
-                  name: projectName
-                })
-              }}
+                onClick={()=>setNewProjectDialogOpen(true)}
                 className="h-full items-start justify-start p-4 bg-background border flex flex-col gap-6 rounded-none">
                     <div className="flex items-center justify-between w-full"><SparkleIcon className="size-4"/>
                  <Kbd className="bg-accent"> ⌘j</Kbd>

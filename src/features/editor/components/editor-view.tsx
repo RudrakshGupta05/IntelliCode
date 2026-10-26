@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useFile, useUpdateFile } from "@/features/projects/hooks/use-files";
 import { CodeEditor } from "./code-editor";
 import { useEffect, useRef } from "react";
+import { AlertTriangleIcon } from "lucide-react";
 
 
 export const EditorView=({projectId}: {projectId: Id<"projects">})=>{
@@ -52,7 +53,13 @@ export const EditorView=({projectId}: {projectId: Id<"projects">})=>{
                     }} />
                 )}
                 {isActiveFileBinary && (
-                    <p>TODO:Implement binary preview</p>
+                    <div className="size-full flex items-center justify-center">
+                        <div className="flex flex-col items-center gap-2.5 max-w-md text-center">
+                            <AlertTriangleIcon className="size-10 text-yellow-500"/>
+                            <h2 className="text-sm font-medium">Binary files are not supported yet.</h2>
+                            <p className="text-xs text-muted-foreground">{activeFile.name} will be editable in a future update.</p>
+                        </div>
+                    </div>
                 )}
 
 
